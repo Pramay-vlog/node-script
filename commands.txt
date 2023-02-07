@@ -1,0 +1,2 @@
+npx createSetup --name="" --db="mongodb"
+npx createCRUD --name="" --type="simple" --db="mongodb"

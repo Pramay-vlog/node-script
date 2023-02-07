@@ -1,0 +1,24 @@
+{
+  "ROLE_CREATED": "role created successfully",
+  "ROLE_ALREADY_EXIST": "role already exist",
+  "USER_CREATED": "user created successfully",
+  "SIGNUP_SUCCESS": "signup successfully",
+  "LOGIN_SUCCESS": "login successfully",
+  "USER_UPDATED": "User updated successfully",
+  "INVALID_ROLE": "invalid role",
+  "INVALID_EMAIL": "invalid email",
+  "OTP_SEND": "OTP sent successfully",
+  "OTP_NOT_MATCH": "OTP dose not match, please try again",
+  "OTP_EXPIRED": "OTP expired, please try again",
+  "USER_ALREADY_EXIST": "user already exist",
+  "PASSWORD_CHANGED": "password changed successfully",
+  "USER_NOT_EXIST": "user does not exist, please sign up",
+  "INVALID_CREDS": "invalid credentials",
+  "USER_NOT_FOUND": "User not found.",
+  "PROFILE_IMAGE_NOT_FOUND": "Profile image not found.",
+  "UNAUTHORIZED": "You are not authorized to perform this action.",
+  "USER_NOT_ACTIVE": "User is not active.",
+
+  "TOKEN_NOT_PROVIDED": "No token, authorization denied",
+  "INVALID_TOKEN": "unauthorized access to this role"
+}

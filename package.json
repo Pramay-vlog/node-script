@@ -1,0 +1,15 @@
+{
+  "name": "setup-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "bin": {
+    "createCRUD": "./commands/createCRUD/index.js",
+    "createSetup": "./commands/createSetup/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "yargs": "^17.5.1"
+  }
+}
