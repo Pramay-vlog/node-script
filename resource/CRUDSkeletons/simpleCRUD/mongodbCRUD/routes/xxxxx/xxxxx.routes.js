@@ -1,20 +1,24 @@
 const express = require("express");
 const router = express.Router();
-const validate = require("../../service/validation/joi.validate")
+const { auth } = require("../middleware/auth");
+const { USER_TYPE: { ADMIN, USER } } = require("../json/enums.json");
 
 const {
-  createXxxxx,
-  getXxxxx,
-  updateXxxxx,
-  deleteXxxxx,
-  validation4create,
-  validation4update
-} = require("../../controllers/xxxxx/xxxxx.controller");
-const { auth } = require("../../middleware/auth");
+  XXXXX: { VALIDATOR, APIS }
+} = require("../controllers");
 
-router.get("/get-xxxxx", getXxxxx);
-router.post("/create-xxxxx", validate("body", validation4create), auth, createXxxxx);
-router.put("/update-xxxxx", validate("body", validation4update), auth, updateXxxxx);
-router.put("/delete-xxxxx", auth, deleteXxxxx);
+/* Post Apis */
+router.post("/", auth({ usersAllowed: [USER, ADMIN] }), VALIDATOR.create, APIS.createXxxxx);
+
+/* Get Apis */
+router.get("/get", auth({ usersAllowed: ["*"] }), VALIDATOR.fetch, APIS.getXxxxx);
+
+/* Put Apis */
+router.put("/update/:_id", auth({ usersAllowed: ["*"] }), VALIDATOR.update, APIS.updateXxxxx);
+router.put("/delete/:_id", auth({ usersAllowed: [ADMIN] }), VALIDATOR.toggleActive, APIS.deleteXxxxx);
 
 module.exports = router;
+
+
+/* Move this into routes index.js file */
+app.use("/xxxxx", require("./xxxxx.routes"));

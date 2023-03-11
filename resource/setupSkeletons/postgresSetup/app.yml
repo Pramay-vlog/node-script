@@ -1,7 +1,7 @@
 apps:
-    - name: xxxxx-backend
-      restart_delay: 100
-      script: npm run start
-      autorestart: true
-      env:
-          NODE_ENV: development
+  - name: xxxxx
+    restart_delay: 100
+    script: npm run start:linux
+    autorestart: true
+    env:
+      NODE_ENV: development

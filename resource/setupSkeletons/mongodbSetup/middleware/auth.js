@@ -1,55 +1,30 @@
-const userModel = require("../models/user/user.model");
+const DB = require("../models");
 const { USER_TYPE } = require("../json/enums.json");
-const apiRes = require("../utils/apiResponse");
+const apiResponseponse = require("../utils/api.response");
 const message = require("../json/message.json");
 const jwt = require("jsonwebtoken");
 
 module.exports = {
-  auth: async (req, res, next, isTokenRequired = true) => {
-    try {
+  auth: ({ isTokenRequired = true, usersAllowed = [] } = {}) => {
+    return async (req, res, next) => {
       const token = req.header("x-auth-token");
-      if ((!token || token === "null") && !isTokenRequired) return next();
-      if ((!token || token === "null") && isTokenRequired) {
-        return apiRes.BAD_REQUEST(res, message.TOKEN_NOT_PROVIDED);
-      }
+      if (isTokenRequired && !token) return apiResponseponse.BAD_REQUEST({ res, message: message.TOKEN_REQUIRED });
+      if (!isTokenRequired && !token) return next();
+
       let decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      let userData = await userModel
-        .findOne({ _id: decoded.userId, isActive: true })
-        .populate({
-          path: "role",
-          select: "roleName",
-        })
-        .select("-createdAt -updatedAt -password");
+      let user = await DB.USER.findOne({ _id: decoded._id, isActive: true }).populate("roleId").lean();
+      if (!user) return apiResponseponse.UNAUTHORIZED({ res, message: message.INVALID_TOKEN });
 
-      if (!userData) {
-        return apiRes.UNAUTHORIZED(res, message.INVALID_TOKEN);
-      }
-      req.userData = userData;
-      next();
-    } catch (error) {
-      console.log("auth error", error);
-      return apiRes.CATCH_ERROR(res, error.message);
-    }
-  },
-
-  authPermissions: (...permissions) => {
-    return (req, res, next) => {
-      try {
-        const { userData } = req;
-        const { roleName } = userData.role;
-        if (roleName === USER_TYPE.ADMIN) {
-          next();
-        } else {
-          if (permissions.includes(roleName)) {
-            next();
-          } else {
-            return apiRes.UNAUTHORIZED(res, message.INVALID_TOKEN);
-          }
-        }
-      } catch (error) {
-        console.log("authPermissions error", error);
-        return apiRes.CATCH_ERROR(res, error.message);
+      req.user = user;
+      if (usersAllowed.length) {
+        if (req.user.roleId.name === USER_TYPE.ADMIN) return next();
+        if (usersAllowed.includes("*")) return next();
+        if (usersAllowed.includes(req.user.roleId.name)) return next();
+        return apiResponseponse.UNAUTHORIZED({ res, message: message.UNAUTHORIZED });
+      } else {
+        if (req.user.roleId.name === USER_TYPE.ADMIN) return next();
+        return apiResponseponse.UNAUTHORIZED({ res, message: message.UNAUTHORIZED });
       }
     };
   },

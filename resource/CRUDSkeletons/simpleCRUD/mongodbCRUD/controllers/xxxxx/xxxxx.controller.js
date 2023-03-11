@@ -1,116 +1,65 @@
-const { HTTP_CODES } = require("../../json/enums.json");
-const message = require("../../json/message.json");
-const xxxxxModel = require("../../models/xxxxx/xxxxx.model");
-const apiRes = require("../../utils/apiResponse");
-const { validateEmptyFields } = require("../../utils/utils");
-const { USER_TYPE } = require("../../json/enums.json");
-const Joi = require("joi");
+const messages = require("../../json/message.json");
+const DB = require("../../models");
+const apiResponse = require("../../utils/api.response");
+const { USER_TYPE: { ADMIN } } = require("../../json/enums.json");
 
 /* APIS For Xxxxx */
 module.exports = exports = {
 
-  validation4create: Joi.object().keys({
-    name: Joi.string().required(),
-  }),
-
-  validation4update: Joi.object().keys({
-    name: Joi.string(),
-  }),
-
   /* Create Xxxxx API */
   createXxxxx: async (req, res) => {
-    try {
-
-      const xxxxx = await xxxxxModel.create(req.body);
-
-      return apiRes.OK(res, message.XXXXX_CREATED, xxxxx);
-    } catch (error) {
-      console.log("Error in createXxxxx: ", error);
-      return apiRes.CATCH_ERROR(res, error.message);
-    }
+    const xxxxx = await DB.XXXXX.create(req.body);
+    return apiResponse.OK({ res, message: messages.SUCCESS, data: xxxxx });
   },
 
   /* Get Xxxxx API */
   getXxxxx: async (req, res) => {
-    try {
-      let { page, limit, skip, sortBy, sortOrder, search } = req.query;
-      let criteria = {};
-      let searchCriteria = {};
+    let { page, limit, skip, sortBy, sortOrder, search, ...query } = req.query;
 
-      // get filters
-      req.userData?.role.roleName === USER_TYPE.ADMIN ? criteria = { ...criteria } : criteria = { isActive: true, ...criteria };
-      page = parseInt(page) || 1;
-      limit = parseInt(limit) || 100;
-      skip = (page - 1) * limit;
-      sortBy = sortBy || "createdAt";
-      sortOrder = sortOrder || "desc";
-      search ? searchCriteria = {
-        $or: [{ name: { $regex: search, $options: "i" } },]
-      } : ""
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 100;
 
-      criteria = { ...criteria, ...searchCriteria };
+    query = req.user?.roleId.name === ADMIN ? { ...query } : { isActive: true, ...query };
+    search ? query = {
+      $or: [{ name: { $regex: search, $options: "i" } },]
+    } : ""
 
-      const xxxxxs = await xxxxxModel
-        .find(criteria)
-        .skip(skip)
-        .limit(limit)
-        .sort({ [sortBy]: sortOrder });
+    const xxxxxs = await DB.XXXXX
+      .find(query)
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort({ [sortBy]: sortOrder })
+      .lean();
 
-      return apiRes.OK(res, message.XXXXX_FETCHED, {
-        xxxxxs,
-        count: await xxxxxModel.countDocuments(criteria),
-      });
-    } catch (error) {
-      console.log("Error in getXxxxx: ", error);
-      return apiRes.CATCH_ERROR(res, error.message);
-    }
+    return apiResponse.OK({ res, message: messages.SUCCESS, data: { count: await DB.XXXXX.countDocuments(query), data: xxxxxs } });
   },
 
   /* Update Xxxxx API*/
   updateXxxxx: async (req, res) => {
-    try {
-      let xxxxxExists = await xxxxxModel.findOne({ _id: req.query.xxxxxId, isActive: true });
-      if (!xxxxxExists) {
-        return apiRes.NOT_FOUND(res, message.XXXXX_NOT_FOUND);
-      }
+    let xxxxxExists = await DB.XXXXX.findOne({ _id: req.params._id, isActive: true });
+    if (!xxxxxExists) return apiResponse.NOT_FOUND(res, messages.NOT_FOUND);
 
-      await xxxxxModel.findByIdAndUpdate(req.query.xxxxxId, req.body, { new: true, });
-
-      return apiRes.OK(res, message.XXXXX_UPDATED, {});
-    } catch (error) {
-      console.log("Error in updateXxxxx: ", error);
-      return apiRes.CATCH_ERROR(res, error.message);
-    }
+    await DB.XXXXX.findByIdAndUpdate(req.params._id, req.body, { new: true, });
+    return apiResponse.OK({ res, message: messages.SUCCESS });
   },
 
   /* Delete Xxxxx API*/
   deleteXxxxx: async (req, res) => {
-    try {
+    let xxxxxExists = await DB.XXXXX.findOne({ _id: req.params._id })
+    if (!xxxxxExists) return apiResponse.NOT_FOUND(res, messages.NOT_FOUND);
 
-      let xxxxxExists = await xxxxxModel.findOne({ _id: req.query.xxxxxId })
-      if (!xxxxxExists) {
-        return apiRes.NOT_FOUND(res, message.XXXXX_NOT_FOUND);
-      }
-
-      if (xxxxxExists.isActive === true) {
-        await xxxxxModel.findByIdAndUpdate(req.query.xxxxxId, { isActive: false, });
-
-      } else {
-        await xxxxxModel.findByIdAndUpdate(req.query.xxxxxId, { isActive: true, });
-
-      }
-
-      return apiRes.OK(res, message.XXXXX_UPDATED, {});
-    } catch (error) {
-      console.log("Error in deleteXxxxx: ", error);
-      return apiRes.CATCH_ERROR(res, error.message);
+    if (xxxxxExists.isActive === true) {
+      await DB.XXXXX.findByIdAndUpdate(req.params._id, { isActive: false, });
+    } else {
+      await DB.XXXXX.findByIdAndUpdate(req.params._id, { isActive: true, });
     }
+    return apiResponse.OK({ res, message: messages.SUCCESS });
   },
+};
 
-  message: {
-    "XXXXX_CREATED": "Xxxxx created successfully.",
-    "XXXXX_FETCHED": "Xxxxx fetched successfully.",
-    "XXXXX_NOT_FOUND": "Xxxxx not found.",
-    "XXXXX_UPDATED": "Xxxxx updated successfully."
+module.exports = {
+  XXXXX: {
+    APIS: require("./xxxxx/xxxxx.controller"),
+    VALIDATOR: require("./xxxxx/xxxxx.validator"),
   }
 };

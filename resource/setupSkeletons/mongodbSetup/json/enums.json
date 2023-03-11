@@ -19,10 +19,21 @@
     "ACTIVE": "active",
     "BLOCKED": "blocked",
     "DISABLED": "disabled",
-    "INACTIVE": "inactive"
+    "INACTIVE": "inactive",
+    "INVITED": "invited",
+    "PENDING": "pending"
   },
   "USER_TYPE": {
     "USER": "user",
     "ADMIN": "admin"
+  },
+  "CHAT_TYPE": {
+    "TEXT": "text",
+    "IMAGE": "image"
+  },
+  "PAYMENT_STATUS": {
+    "PENDING": "pending",
+    "PAID": "paid",
+    "FAILED": "failed"
   }
 }

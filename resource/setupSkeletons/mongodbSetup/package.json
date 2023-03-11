@@ -1,11 +1,12 @@
 {
-  "name": "xxxxx-backend",
+  "name": "xxxxx",
   "version": "1.0.0",
-  "description": "Backend for the xxxxx app",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev": "nodemon ./bin/www"
+    "dev": "nodemon ./bin/www",
+    "start:linux": "DEBUG=xxxxx:server,db,admin,socket node ./bin/www",
+    "dev:linux": "DEBUG=xxxxx:server,db,admin,socket nodemon ./bin/www"
   },
   "dependencies": {
     "aws-sdk": "^2.1089.0",
@@ -16,8 +17,10 @@
     "debug": "~2.6.9",
     "dotenv": "^16.0.2",
     "express": "~4.16.1",
-    "joi": "^17.7.0",
+    "express-async-errors": "^3.1.1",
+    "joi": "^17.8.3",
     "jsonwebtoken": "^8.5.1",
+    "moment-timezone": "^0.5.40",
     "mongoose": "^6.6.1",
     "morgan": "~1.9.1",
     "multer": "^1.4.4",
