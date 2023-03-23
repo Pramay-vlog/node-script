@@ -54,8 +54,8 @@ module.exports = {
       email: Joi.string(),
       page: Joi.number().default(1),
       limit: Joi.number().default(100),
-      sortBy: Joi.string().default("createdAt"),
-      sortOrder: Joi.string().default(-1),
+      sortBy: Joi.string(),
+      sortOrder: Joi.string(),
     }),
   }),
 };

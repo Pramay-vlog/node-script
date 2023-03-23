@@ -75,7 +75,7 @@ module.exports = exports = {
     const user = await DB.USER.findById(req.params._id);
     if (!user) return apiResponse.NOT_FOUND({ res, message: messages.NOT_FOUND });
 
-    if (await DB.USER.findOne({ email: req.body.email })) return apiResponse.DUPLICATE_VALUE({ res, message: messages.EMAIL_ALREADY_EXISTS });
+    if (await DB.USER.findOne({ _id: { $ne: user._id }, email: req.body.email }).lean()) return apiResponse.DUPLICATE_VALUE({ res, message: messages.EMAIL_ALREADY_EXISTS });
     let data = await DB.USER.findByIdAndUpdate(req.params._id, req.body, { new: true });
     return apiResponse.OK({ res, message: messages.SUCCESS, data });
   },
@@ -89,9 +89,7 @@ module.exports = exports = {
     sortOrder = sortOrder || -1;
 
     query = req.user.roleId.name === ADMIN ? { ...query } : { _id: req.user._id };
-    search ? query = {
-      $or: [{ name: { $regex: search, $options: "i" } }]
-    } : "";
+    search ? query.$or = [{ name: { $regex: search, $options: "i" } }] : "";
 
     const data = await DB.USER
       .find(query)

@@ -78,7 +78,7 @@ module.exports = exports = {
     const user = await db.user.findOne({ where: { id: req.params.id }, raw: true, nest: true });
     if (!user) return apiResponse.NOT_FOUND({ res, message: messages.NOT_FOUND });
 
-    if (await db.user.findOne({ where: { email: req.body.email } })) return apiResponse.DUPLICATE_VALUE({ res, message: messages.EMAIL_ALREADY_EXISTS });
+    if (await db.user.findOne({ where: { id: { [Op.ne]: user.id }, email: req.body.email } })) return apiResponse.DUPLICATE_VALUE({ res, message: messages.EMAIL_ALREADY_EXISTS });
     let data = await db.user.update(req.body, { where: { id: req.params.id } });
     return apiResponse.OK({ res, message: messages.SUCCESS, data });
   },
@@ -88,11 +88,11 @@ module.exports = exports = {
 
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
+    sortBy = sortBy || "createdAt";
+    sortOrder = sortOrder || "DESC";
 
     query = req.user.role.name === ADMIN ? { ...query } : { id: req.user.id };
-    search ? query = {
-      $or: [{ name: { $regex: search, $options: "i" } }]
-    } : "";
+    search ? query.$or = [{ name: { $regex: search, $options: "i" } }] : "";
 
     const data = await db.user.findAll({
       where: { ...query },
@@ -100,9 +100,7 @@ module.exports = exports = {
       offset: (page - 1) * limit,
       order: [[sortBy, sortOrder]],
       include: [{ model: db.role, as: "role", attributes: ["name"] }],
-      raw: true,
-      nest: true
-    });
+    }, { raw: true, nest: true });
 
     return apiResponse.OK({ res, message: messages.SUCCESS, data: { count: await db.user.count({ where: { ...query } }), data } });
   },

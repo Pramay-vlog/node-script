@@ -18,11 +18,11 @@ module.exports = exports = {
 
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 100;
+    sortBy = sortBy || "createdAt";
+    sortOrder = sortOrder || -1;
 
     query = req.user?.roleId.name === ADMIN ? { ...query } : { isActive: true, ...query };
-    search ? query = {
-      $or: [{ name: { $regex: search, $options: "i" } },]
-    } : ""
+    search ? query.$or = [{ name: { $regex: search, $options: "i" } }] : ""
 
     const xxxxxs = await DB.XXXXX
       .find(query)
