@@ -37,7 +37,7 @@ module.exports = exports = {
   /* Update Xxxxx API*/
   updateXxxxx: async (req, res) => {
     let xxxxxExists = await DB.XXXXX.findOne({ _id: req.params._id, isActive: true });
-    if (!xxxxxExists) return apiResponse.NOT_FOUND(res, messages.NOT_FOUND);
+    if (!xxxxxExists) return apiResponse.NOT_FOUND({res, message: messages.NOT_FOUND});
 
     await DB.XXXXX.findByIdAndUpdate(req.params._id, req.body, { new: true, });
     return apiResponse.OK({ res, message: messages.SUCCESS });
@@ -46,7 +46,7 @@ module.exports = exports = {
   /* Delete Xxxxx API*/
   deleteXxxxx: async (req, res) => {
     let xxxxxExists = await DB.XXXXX.findOne({ _id: req.params._id })
-    if (!xxxxxExists) return apiResponse.NOT_FOUND(res, messages.NOT_FOUND);
+    if (!xxxxxExists) return apiResponse.NOT_FOUND({res, message: messages.NOT_FOUND});
 
     await DB.XXXXX.findByIdAndUpdate(req.params._id, { isActive: false, });
     return apiResponse.OK({ res, message: messages.SUCCESS });
