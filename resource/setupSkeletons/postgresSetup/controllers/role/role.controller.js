@@ -4,7 +4,6 @@ const apiResponse = require("../../utils/api.response");
 
 module.exports = {
   createRole: async (req, res) => {
-    const role = await db.role.create(req.body);
-    return apiResponse.OK({ res, message: messages.SUCCESS, data: role });
+    return apiResponse.OK({ res, message: messages.SUCCESS, data: await db.role.create(req.body) });
   },
 };

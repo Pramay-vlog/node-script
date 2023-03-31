@@ -13,9 +13,9 @@ const xxxxxSchema = new Schema(
     }
 );
 
-let xxxxxrModel = model("xxxxx", xxxxxSchema, "xxxxx");
+let xxxxxModel = model("xxxxx", xxxxxSchema, "xxxxx");
 
-module.exports = xxxxxrModel;
+module.exports = xxxxxModel;
 
 /* Move this object to models index file */
 module.exports = {

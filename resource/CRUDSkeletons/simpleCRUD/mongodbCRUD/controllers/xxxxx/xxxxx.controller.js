@@ -48,11 +48,7 @@ module.exports = exports = {
     let xxxxxExists = await DB.XXXXX.findOne({ _id: req.params._id })
     if (!xxxxxExists) return apiResponse.NOT_FOUND(res, messages.NOT_FOUND);
 
-    if (xxxxxExists.isActive === true) {
-      await DB.XXXXX.findByIdAndUpdate(req.params._id, { isActive: false, });
-    } else {
-      await DB.XXXXX.findByIdAndUpdate(req.params._id, { isActive: true, });
-    }
+    await DB.XXXXX.findByIdAndUpdate(req.params._id, { isActive: false, });
     return apiResponse.OK({ res, message: messages.SUCCESS });
   },
 };

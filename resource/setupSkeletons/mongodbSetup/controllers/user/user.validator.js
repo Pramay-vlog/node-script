@@ -24,8 +24,12 @@ module.exports = {
     body: Joi.object({
       email: Joi.string().required(),
       otp: Joi.string().required(),
-      password: Joi.string().required(),
     }),
+  }),
+  verifyOtp_ChangePassword: validator({
+    body: Joi.object({
+      password: Joi.string().required(),
+    })
   }),
   changePassword: validator({
     body: Joi.object({

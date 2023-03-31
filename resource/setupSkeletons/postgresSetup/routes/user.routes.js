@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { auth } = require("../middleware/auth");
-const { USER_TYPE: { ADMIN } } = require("../json/enums.json");
+const { USER_TYPE: { ADMIN, USER } } = require("../json/enums.json");
 
 const {
   USER: { VALIDATOR, APIS },
@@ -12,6 +12,7 @@ router.post("/signup", VALIDATOR.signup, APIS.signUp);
 router.post("/signin", VALIDATOR.signIn, APIS.signIn);
 router.post("/forgot", VALIDATOR.forgot, APIS.forgot);
 router.post("/verifyOtp", VALIDATOR.verifyOtp, APIS.verifyOtp);
+router.post("/verifyOtp/changePassword", auth({ usersAllowed: [USER] }), VALIDATOR.verifyOtp_ChangePassword, APIS.verifyOtp_ChangePassword)
 router.post("/changePassword", auth({ usersAllowed: ["*"] }), VALIDATOR.changePassword, APIS.changePassword);
 
 router.put("/update/:id", auth({ usersAllowed: ["*"] }), VALIDATOR.update, APIS.update);

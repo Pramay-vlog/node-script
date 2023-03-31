@@ -57,10 +57,17 @@ module.exports = exports = {
     const verify = await db.otp.destroy({ where: { email: req.body.email, otp: req.body.otp } });
     if (!verify) return apiResponse.BAD_REQUEST({ res, message: messages.INVALID_CREDS });
 
-    await db.user.update(
-      { password: await helper.hashPassword({ password: req.body.password }) },
-      { where: { email: req.body.email } }
-    )
+    const user = await db.user.findOne({ where: { email: req.body.email } })
+    const token = helper.generateToken({ data: { id: user.id, role: user.role.name } })
+
+    return apiResponse.OK({ res, message: messages.SUCCESS, data: token });
+  },
+
+  verifyOtp_ChangePassword: async (req, res) => {
+    const user = await db.user.findOne({ where: { id: req.user.id } }, { raw: true, new: true });
+    if (!user) return apiResponse.NOT_FOUND({ res, message: messages.NOT_FOUND });
+
+    await db.user.update({ password: await helper.hashPassword({ password: req.body.password }) }, { where: { id: user.id } })
     return apiResponse.OK({ res, message: messages.SUCCESS });
   },
 

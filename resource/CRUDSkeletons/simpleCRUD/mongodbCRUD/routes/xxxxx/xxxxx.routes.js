@@ -11,7 +11,7 @@ const {
 router.post("/", auth({ usersAllowed: [USER, ADMIN] }), VALIDATOR.create, APIS.createXxxxx);
 
 /* Get Apis */
-router.get("/get", auth({ usersAllowed: ["*"] }), VALIDATOR.fetch, APIS.getXxxxx);
+router.get("/", auth({ usersAllowed: ["*"] }), VALIDATOR.fetch, APIS.getXxxxx);
 
 /* Put Apis */
 router.put("/update/:_id", auth({ usersAllowed: ["*"] }), VALIDATOR.update, APIS.updateXxxxx);
