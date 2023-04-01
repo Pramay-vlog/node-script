@@ -63,7 +63,7 @@ module.exports = exports = {
     return apiResponse.OK({ res, message: messages.SUCCESS, data: token });
   },
 
-  verifyOtp_ChangePassword: async (req, res) => {
+  afterOtpVerify: async (req, res) => {
     const user = await db.user.findOne({ where: { id: req.user.id } }, { raw: true, new: true });
     if (!user) return apiResponse.NOT_FOUND({ res, message: messages.NOT_FOUND });
 

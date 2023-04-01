@@ -60,9 +60,10 @@ module.exports = exports = {
     return apiResponse.OK({ res, message: messages.SUCCESS, data: token });
   },
 
-  verifyOtp_ChangePassword: async (req, res) => {
+  afterOtpVerify: async (req, res) => {
     const user = await DB.USER.findById(req.user._id);
     if (!user) return apiResponse.NOT_FOUND({ res, message: messages.NOT_FOUND });
+
     await DB.USER.findByIdAndUpdate(req.user._id, { password: await helper.hashPassword({ password: req.body.password }) })
     return apiResponse.OK({ res, message: messages.SUCCESS });
   },

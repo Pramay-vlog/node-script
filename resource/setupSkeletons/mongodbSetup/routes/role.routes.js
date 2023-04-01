@@ -8,6 +8,7 @@ const {
   ROLE: { VALIDATOR, APIS },
 } = require("../controllers");
 
+/* Post Apis */
 router.post("/", auth({ usersAllowed: [USER_TYPE.ADMIN], isTokenRequired: false }), VALIDATOR.createRole, APIS.createRole);
 
 module.exports = router;

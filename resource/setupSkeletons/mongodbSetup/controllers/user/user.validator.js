@@ -26,7 +26,7 @@ module.exports = {
       otp: Joi.string().required(),
     }),
   }),
-  verifyOtp_ChangePassword: validator({
+  afterOtpVerify: validator({
     body: Joi.object({
       password: Joi.string().required(),
     })
