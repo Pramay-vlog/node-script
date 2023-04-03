@@ -119,4 +119,16 @@ module.exports = exports = {
     }
     return apiResponse.OK({ res, message: messages.SUCCESS, data });
   },
+
+  delete: async (req, res) => {
+    const user = await db.user.findOne({ where: { id: req.params.id }, raw: true, nest: true });
+    if (!user) return apiResponse.NOT_FOUND({ res, message: messages.NOT_FOUND });
+
+    if (user.isActive === 1) {
+      await db.user.update({ where: { isActive: 0 } }, { where: { id: req.params.id } });
+    } else {
+      await db.user.update({ where: { isActive: 1 } }, { where: { id: req.params.id } });
+    }
+    return apiResponse.OK({ res, message: messages.SUCCESS });
+  }
 };

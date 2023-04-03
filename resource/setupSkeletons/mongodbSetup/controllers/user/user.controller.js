@@ -116,4 +116,12 @@ module.exports = exports = {
     }
     return apiResponse.OK({ res, message: messages.SUCCESS, data });
   },
+
+  delete: async (req, res) => {
+    const user = await DB.USER.findById(req.params._id);
+    if (!user) return apiResponse.NOT_FOUND({ res, message: messages.NOT_FOUND });
+
+    await DB.USER.findByIdAndUpdate(req.params._id, { isActive: { $ne: user.isActive } }, { new: true });
+    return apiResponse.OK({ res, message: messages.SUCCESS });
+  }
 };

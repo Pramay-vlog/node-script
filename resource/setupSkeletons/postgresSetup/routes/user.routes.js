@@ -18,6 +18,7 @@ router.post("/changePassword", auth({ usersAllowed: ["*"] }), VALIDATOR.changePa
 
 /* Put Apis */
 router.put("/update/:id", auth({ usersAllowed: ["*"] }), VALIDATOR.update, APIS.update);
+router.put("/toggleActive/:id", auth({ usersAllowed: [ADMIN] }), VALIDATOR.toggleActive, APIS.delete)
 
 /* Get Apis */
 router.get("/get", auth({ usersAllowed: ["*"] }), VALIDATOR.fetch, APIS.getUser);

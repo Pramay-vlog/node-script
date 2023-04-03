@@ -48,6 +48,14 @@ module.exports = {
         .required(),
     }),
   }),
+  toggleActive: validator({
+    params: Joi.object({
+      _id: Joi.string()
+        .pattern(/^[0-9a-fA-F]{24}$/)
+        .message("Invalid ID")
+        .required(),
+    }),
+  }),
   fetch: validator({
     query: Joi.object({
       _id: Joi.string()

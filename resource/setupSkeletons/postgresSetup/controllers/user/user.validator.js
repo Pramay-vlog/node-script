@@ -46,6 +46,11 @@ module.exports = {
       id: Joi.number().required(),
     }),
   }),
+  toggleActive: validator({
+    params: Joi.object({
+      id: Joi.number().required(),
+    }),
+  }),
   fetch: validator({
     query: Joi.object({
       id: Joi.number(),
