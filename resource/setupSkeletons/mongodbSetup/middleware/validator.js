@@ -14,7 +14,11 @@ module.exports = (schema) => async (req, res, next) => {
     if (error) {
       console.log("error", error);
       const context = error?.details;
-      return apiResponseponse.BAD_REQUEST({ res, message: `Validation failed for ${path}.`, data: { context } });
+      return apiResponseponse.BAD_REQUEST({
+        res,
+        message: `Validation failed for ${path}.`,
+        data: { context, fieldsAccepted: Object.keys(schema[path].describe().keys) },
+      });
     }
     req[path] = value;
   }

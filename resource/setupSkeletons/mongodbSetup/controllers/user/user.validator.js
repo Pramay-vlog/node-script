@@ -61,6 +61,10 @@ module.exports = {
       _id: Joi.string()
         .pattern(/^[0-9a-fA-F]{24}$/)
         .message("Invalid ID"),
+      page: Joi.number().default(1),
+      limit: Joi.number().default(100),
+      sortBy: Joi.string().default('createdAt'),
+      sortOrder: Joi.string().default('-1'),
       search: Joi.string(),
       name: Joi.string(),
       email: Joi.string(),

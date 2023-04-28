@@ -13,7 +13,7 @@ module.exports = {
 
       let decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      let user = await DB.USER.findOne({ _id: decoded._id, isActive: true }).populate("roleId").lean();
+      let user = await DB.USER.findOne({ _id: decoded?._id, isActive: true }).populate("roleId").lean();
       if (!user) return apiResponseponse.UNAUTHORIZED({ res, message: message.INVALID_TOKEN });
 
       req.user = user;

@@ -3,7 +3,7 @@ const apiResponse = require("../../utils/api.response");
 const DB = require("../../models");
 const helper = require("../../utils/utils");
 const EMAIL = require("../../service/mail.service")
-const { USER_TYPE: { ADMIN, USER } } = require("../../json/enums.json");
+const { USER_TYPE: { ADMIN } } = require("../../json/enums.json");
 
 module.exports = exports = {
   signIn: async (req, res) => {
@@ -90,11 +90,6 @@ module.exports = exports = {
   getUser: async (req, res) => {
     let { page, limit, sortBy, sortOrder, search, ...query } = req.query;
 
-    page = parseInt(page) || 1;
-    limit = parseInt(limit) || 10;
-    sortBy = sortBy || "createdAt";
-    sortOrder = sortOrder || -1;
-
     query = req.user.roleId.name === ADMIN ? { ...query } : { _id: req.user._id };
     search ? query.$or = [{ name: { $regex: search, $options: "i" } }] : "";
 
@@ -106,7 +101,7 @@ module.exports = exports = {
       .populate("roleId", "name")
       .lean();
 
-    return apiResponse.OK({ res, message: messages.SUCCESS, count: await DB.USER.countDocuments(query), data });
+    return apiResponse.OK({ res, message: messages.SUCCESS, data: { count: await DB.USER.countDocuments(query), data } });
   },
 
   dashboardCounts: async (req, res) => {
