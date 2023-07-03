@@ -20,9 +20,12 @@ const {
     ConnectionTimedOutError,
     EmptyResultError,
 } = require("sequelize")
+const { logger } = require("../utils/logger");
+
 
 module.exports = async (error, req, res, next) => {
-    console.log("ERROR MESSAGE: ", error.message, "\nERROR STACK: ", error.stack);
+    logger.warn(` ERROR AT PATH ${req.path}`);
+    console.log(error)
 
     if (error instanceof MulterError) return apiResponse.BAD_REQUEST({ res, message: messages.INVALID_FILE, data: { context: error.code } });
     if (error instanceof JsonWebTokenError) return apiResponse.UNAUTHORIZED({ res, message: messages.INVALID_TOKEN, data: { context: error.message } });
@@ -44,6 +47,8 @@ module.exports = async (error, req, res, next) => {
         error instanceof ConnectionTimedOutError ||
         error instanceof EmptyResultError
     ) return apiResponse.BAD_REQUEST({ res, message: messages.FAILED, data: { context: error.message } });
+
+    logger.error(`STACK_ERROR: ${error}`)
 
     return apiResponse.CATCH_ERROR({ res, message: messages.INTERNAL_SERVER_ERROR, data: { context: error.message } });
 };

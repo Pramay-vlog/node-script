@@ -1,6 +1,10 @@
 const nodemailer = require("nodemailer");
+const { logger } = require("../utils/logger");
+
 
 module.exports = {
+
+
     sendEmail: async ({ to, name }) => {
         let otp = Math.floor(Math.random() * (999999 - 100000 + 1) + 100000);
 
@@ -104,13 +108,19 @@ module.exports = {
         };
 
         try {
+
             await transporter.sendMail(mailOptions);
             return otp;
+
         } catch (error) {
-            console.log("mail sending wrror", error);
+
+            logger.error(` MAIL SENDING ERROR: ${error}`);
             return new Error("mail not sent, plase try again later");
+
         }
     },
+
+
     sendQueryEmail: async ({ email, userName: name, query, subject }) => {
         var transporter = nodemailer.createTransport({
             host: process.env.EMAIL_HOST,
@@ -201,11 +211,15 @@ module.exports = {
         };
 
         try {
+
             await transporter.sendMail(mailOptions);
             return true;
+
         } catch (error) {
-            console.log("mail sending wrror", error);
+
+            logger.error(` MAIL SENDING ERROR: ${error}`);
             return new Error("mail not sent, plase try again later");
+
         }
     },
 };

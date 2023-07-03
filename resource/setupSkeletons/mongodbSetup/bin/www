@@ -7,8 +7,8 @@ require("dotenv").config();
 require("../config/db.config");
 var app = require("../app");
 var http = require("http");
-var debugServer = require("debug")("xxxxx:server");
 const { Server } = require("socket.io");
+const { logger } = require("../utils/logger");
 
 /**
  * Get port from environment and store in Express.
@@ -36,19 +36,19 @@ server.on("listening", onListening);
  */
 
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+    var port = parseInt(val, 10);
 
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
+    if (isNaN(port)) {
+        // named pipe
+        return val;
+    }
 
-  if (port >= 0) {
-    // port number
-    return port;
-  }
+    if (port >= 0) {
+        // port number
+        return port;
+    }
 
-  return false;
+    return false;
 }
 
 /**
@@ -56,25 +56,25 @@ function normalizePort(val) {
  */
 
 function onError(error) {
-  if (error.syscall !== "listen") {
-    throw error;
-  }
+    if (error.syscall !== "listen") {
+        throw error;
+    }
 
-  var bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
+    var bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
 
-  // handle specific listen errors with friendly messages
-  switch (error.code) {
-    case "EACCES":
-      console.error(bind + " requires elevated privileges");
-      process.exit(1);
-      break;
-    case "EADDRINUSE":
-      console.error(bind + " is already in use");
-      process.exit(1);
-      break;
-    default:
-      throw error;
-  }
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+        case "EACCES":
+            console.error(bind + " requires elevated privileges");
+            process.exit(1);
+            break;
+        case "EADDRINUSE":
+            console.error(bind + " is already in use");
+            process.exit(1);
+            break;
+        default:
+            throw error;
+    }
 }
 
 /**
@@ -82,15 +82,12 @@ function onError(error) {
  */
 
 async function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
-  debugServer("🚀 listen on port", port);
-  // console.log("🚀 server listen on port", port);
+    logger.debug("Server running on http://localhost:" + port);
 
-  // const io = new Server(server, {
-  //   cors: {
-  //     origin: "*", // allow to server to accept request from different origin
-  //   },
-  // });
-  // require("../controllers/chat/chat.socket")(io);
+    // const io = new Server(server, {
+    //   cors: {
+    //     origin: "*", // allow to server to accept request from different origin
+    //   },
+    // });
+    // require("../controllers/chat/chat.socket")(io);
 }

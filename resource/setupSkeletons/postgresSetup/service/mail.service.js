@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 
 module.exports = {
+
     sendEmail: async ({ to, name }) => {
         let otp = Math.floor(Math.random() * (999999 - 100000 + 1) + 100000);
 
@@ -111,6 +112,8 @@ module.exports = {
             return new Error("mail not sent, plase try again later");
         }
     },
+
+
     sendQueryEmail: async ({ email, userName: name, query, subject }) => {
         var transporter = nodemailer.createTransport({
             host: process.env.EMAIL_HOST,
