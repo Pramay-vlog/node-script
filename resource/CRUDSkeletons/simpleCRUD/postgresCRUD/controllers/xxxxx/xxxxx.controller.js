@@ -6,57 +6,69 @@ const apiResponse = require("../../utils/api.response");
 /* APIS For Xxxxx */
 module.exports = exports = {
 
-  /* Create Xxxxx API */
-  createXxxxx: async (req, res) => {
-    const xxxxx = await db.xxxxx.create(req.body);
-    return apiResponse.OK({ res, message: messages.SUCCESS, data: xxxxx });
-  },
+    /* Create Xxxxx API */
+    createXxxxx: async (req, res) => {
 
-  /* Get Xxxxx API */
-  getXxxxx: async (req, res) => {
-    let { page, limit, skip, sortBy, sortOrder, search, ...query } = req.query;
+        const xxxxx = await db.xxxxx.create(req.body);
+        return apiResponse.OK({ res, message: messages.SUCCESS, data: xxxxx });
 
-    page = parseInt(page) || 1;
-    limit = parseInt(limit) || 100;
-    sortBy = sortBy || "createdAt";
-    sortOrder = sortOrder || "DESC";
+    },
 
-    query = req.user?.role.name === ADMIN ? { ...query } : { isActive: 1, ...query };
-    search ? query.$or = [{ name: { $regex: search, $options: "i" } }] : ""
 
-    const xxxxxs = await db.xxxxx.findAll({
-      where: { ...query },
-      limit,
-      offset: (page - 1) * limit,
-      order: [[sortBy, sortOrder]],
-    }, { raw: true, nest: true })
+    /* Get Xxxxx API */
+    getXxxxx: async (req, res) => {
 
-    return apiResponse.OK({ res, message: messages.SUCCESS, data: { count: await db.xxxxx.count({ where: { ...query } }), data: xxxxxs } });
-  },
+        let { page, limit, skip, sortBy, sortOrder, search, ...query } = req.query;
 
-  /* Update Xxxxx API*/
-  updateXxxxx: async (req, res) => {
-    let xxxxxExists = await db.xxxxx.findOne({ where: { id: req.params.id, isActive: 1 } }, { raw: true, nest: true });
-    if (!xxxxxExists) return apiResponse.NOT_FOUND(res, messages.NOT_FOUND);
+        page = parseInt(page) || 1;
+        limit = parseInt(limit) || 100;
+        sortBy = sortBy || "createdAt";
+        sortOrder = sortOrder || "DESC";
 
-    await db.xxxxx.update(req.body, { where: { id: req.params.id } });
-    return apiResponse.OK({ res, message: messages.SUCCESS });
-  },
+        query = req.user?.role.name === ADMIN ? { ...query } : { isActive: 1, ...query };
+        search ? query.$or = [{ name: { $regex: search, $options: "i" } }] : ""
 
-  /* Delete Xxxxx API*/
-  deleteXxxxx: async (req, res) => {
-    let xxxxxExists = await db.xxxxx.findOne({ where: { id: req.params.id } }, { raw: true, nest: true });
-    if (!xxxxxExists) return apiResponse.NOT_FOUND(res, messages.NOT_FOUND);
+        const xxxxxs = await db.xxxxx.findAll({
+            where: { ...query },
+            limit,
+            offset: (page - 1) * limit,
+            order: [[sortBy, sortOrder]],
+        }, { raw: true, nest: true })
 
-    await db.xxxxx.update({ isActive: 0 }, { where: { id: req.params.id } });
-    return apiResponse.OK({ res, message: messages.SUCCESS });
-  },
+        return apiResponse.OK({ res, message: messages.SUCCESS, data: { count: await db.xxxxx.count({ where: { ...query } }), data: xxxxxs } });
+
+    },
+
+
+    /* Update Xxxxx API*/
+    updateXxxxx: async (req, res) => {
+
+        let xxxxxExists = await db.xxxxx.findOne({ where: { id: req.params.id, isActive: 1 } }, { raw: true, nest: true });
+        if (!xxxxxExists) return apiResponse.NOT_FOUND(res, messages.NOT_FOUND);
+
+        await db.xxxxx.update(req.body, { where: { id: req.params.id } });
+        return apiResponse.OK({ res, message: messages.SUCCESS });
+
+    },
+
+
+    /* Delete Xxxxx API*/
+    deleteXxxxx: async (req, res) => {
+
+        let xxxxxExists = await db.xxxxx.findOne({ where: { id: req.params.id } }, { raw: true, nest: true });
+        if (!xxxxxExists) return apiResponse.NOT_FOUND(res, messages.NOT_FOUND);
+
+        await db.xxxxx.update({ isActive: 0 }, { where: { id: req.params.id } });
+        return apiResponse.OK({ res, message: messages.SUCCESS });
+
+    },
+
 };
 
 /* Move this object to controller index file */
 module.exports = {
-  XXXXX: {
-    APIS: require("./xxxxx/xxxxx.controller"),
-    VALIDATOR: require("./xxxxx/xxxxx.validator"),
-  },
+    XXXXX: {
+        APIS: require("./xxxxx/xxxxx.controller"),
+        VALIDATOR: require("./xxxxx/xxxxx.validator"),
+    },
 };

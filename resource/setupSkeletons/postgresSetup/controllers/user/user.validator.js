@@ -71,11 +71,11 @@ module.exports = {
 
     fetch: validator({
         query: Joi.object({
-            id: Joi.number(),
             page: Joi.number().default(1),
             limit: Joi.number().default(100),
             sortBy: Joi.string(),
             sortOrder: Joi.string(),
+            id: Joi.number(),
             search: Joi.string(),
             name: Joi.string(),
             email: Joi.string(),

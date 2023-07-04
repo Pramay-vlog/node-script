@@ -6,8 +6,7 @@ module.exports = {
 
     createRole: validator({
         body: Joi.object({
-            name: Joi.string().valid(...Object.values(USER_TYPE)).required(),
-            description: Joi.string(),
+            name: Joi.string().valid(...Object.values(USER_TYPE)).required()
         }),
     }),
 

@@ -2,10 +2,10 @@ const { Schema, model } = require("mongoose");
 
 const xxxxxSchema = new Schema(
     {
-        isActive: {
-            type: Boolean,
-            default: true
-        }
+
+        name: { type: String },
+        isActive: { type: Boolean, default: true }
+
     },
     {
         timestamps: true,

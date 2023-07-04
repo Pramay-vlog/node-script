@@ -6,11 +6,13 @@ const { logger } = require("../utils/logger");
 
 const userSchema = new Schema(
     {
+
         email: { type: String },
         name: { type: String, },
         password: { type: String, required: true, },
         roleId: { type: Schema.Types.ObjectId, ref: "role", required: true, },
         isActive: { type: Boolean, default: true, },
+
     },
     { timestamps: true, versionKey: false, }
 );

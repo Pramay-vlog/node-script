@@ -3,59 +3,71 @@ const DB = require("../../models");
 const apiResponse = require("../../utils/api.response");
 const { USER_TYPE: { ADMIN } } = require("../../json/enums.json");
 
+
 /* APIS For Xxxxx */
 module.exports = exports = {
 
-  /* Create Xxxxx API */
-  createXxxxx: async (req, res) => {
-    const xxxxx = await DB.XXXXX.create(req.body);
-    return apiResponse.OK({ res, message: messages.SUCCESS, data: xxxxx });
-  },
+    /* Create Xxxxx API */
+    createXxxxx: async (req, res) => {
 
-  /* Get Xxxxx API */
-  getXxxxx: async (req, res) => {
-    let { page, limit, skip, sortBy, sortOrder, search, ...query } = req.query;
+        const xxxxx = await DB.XXXXX.create(req.body);
+        return apiResponse.OK({ res, message: messages.SUCCESS, data: xxxxx });
 
-    page = parseInt(page) || 1;
-    limit = parseInt(limit) || 100;
-    sortBy = sortBy || "createdAt";
-    sortOrder = sortOrder || -1;
+    },
 
-    query = req.user?.roleId.name === ADMIN ? { ...query } : { isActive: true, ...query };
-    search ? query.$or = [{ name: { $regex: search, $options: "i" } }] : ""
 
-    const xxxxxs = await DB.XXXXX
-      .find(query)
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .sort({ [sortBy]: sortOrder })
-      .lean();
+    /* Get Xxxxx API */
+    getXxxxx: async (req, res) => {
 
-    return apiResponse.OK({ res, message: messages.SUCCESS, data: { count: await DB.XXXXX.countDocuments(query), data: xxxxxs } });
-  },
+        let { page, limit, skip, sortBy, sortOrder, search, ...query } = req.query;
 
-  /* Update Xxxxx API*/
-  updateXxxxx: async (req, res) => {
-    let xxxxxExists = await DB.XXXXX.findOne({ _id: req.params._id, isActive: true });
-    if (!xxxxxExists) return apiResponse.NOT_FOUND({res, message: messages.NOT_FOUND});
+        page = parseInt(page) || 1;
+        limit = parseInt(limit) || 100;
+        sortBy = sortBy || "createdAt";
+        sortOrder = sortOrder || -1;
 
-    await DB.XXXXX.findByIdAndUpdate(req.params._id, req.body, { new: true, });
-    return apiResponse.OK({ res, message: messages.SUCCESS });
-  },
+        query = req.user?.roleId.name === ADMIN ? { ...query } : { isActive: true, ...query };
+        search ? query.$or = [{ name: { $regex: search, $options: "i" } }] : ""
 
-  /* Delete Xxxxx API*/
-  deleteXxxxx: async (req, res) => {
-    let xxxxxExists = await DB.XXXXX.findOne({ _id: req.params._id })
-    if (!xxxxxExists) return apiResponse.NOT_FOUND({res, message: messages.NOT_FOUND});
+        const xxxxxs = await DB.XXXXX
+            .find(query)
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .sort({ [sortBy]: sortOrder })
+            .lean();
 
-    await DB.XXXXX.findByIdAndUpdate(req.params._id, { isActive: false, });
-    return apiResponse.OK({ res, message: messages.SUCCESS });
-  },
+        return apiResponse.OK({ res, message: messages.SUCCESS, data: { count: await DB.XXXXX.countDocuments(query), data: xxxxxs } });
+
+    },
+
+
+    /* Update Xxxxx API*/
+    updateXxxxx: async (req, res) => {
+
+        let xxxxxExists = await DB.XXXXX.findOne({ _id: req.params._id, isActive: true });
+        if (!xxxxxExists) return apiResponse.NOT_FOUND({ res, message: messages.NOT_FOUND });
+
+        await DB.XXXXX.findByIdAndUpdate(req.params._id, req.body, { new: true, });
+        return apiResponse.OK({ res, message: messages.SUCCESS });
+
+    },
+
+
+    /* Delete Xxxxx API*/
+    deleteXxxxx: async (req, res) => {
+
+        let xxxxxExists = await DB.XXXXX.findOne({ _id: req.params._id })
+        if (!xxxxxExists) return apiResponse.NOT_FOUND({ res, message: messages.NOT_FOUND });
+
+        await DB.XXXXX.findByIdAndUpdate(req.params._id, { isActive: false, });
+        return apiResponse.OK({ res, message: messages.SUCCESS });
+
+    },
 };
 
 module.exports = {
-  XXXXX: {
-    APIS: require("./xxxxx/xxxxx.controller"),
-    VALIDATOR: require("./xxxxx/xxxxx.validator"),
-  }
+    XXXXX: {
+        APIS: require("./xxxxx/xxxxx.controller"),
+        VALIDATOR: require("./xxxxx/xxxxx.validator"),
+    }
 };
