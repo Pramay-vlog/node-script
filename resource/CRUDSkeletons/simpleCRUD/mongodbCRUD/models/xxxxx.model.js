@@ -17,7 +17,4 @@ let xxxxxModel = model("xxxxx", xxxxxSchema, "xxxxx");
 
 module.exports = xxxxxModel;
 
-/* Move this object to models index file */
-module.exports = {
-    XXXXX: require("./xxxxx.model"),
-};
+// XXXXX: require("./xxxxx.model"),

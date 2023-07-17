@@ -39,10 +39,10 @@ module.exports = {
             limit: Joi.number().default(100),
             sortBy: Joi.string(),
             sortOrder: Joi.string(),
+            search: Joi.string(),
             _id: Joi.string()
                 .pattern(/^[0-9a-fA-F]{24}$/)
                 .message("Invalid ID"),
-            search: Joi.string(),
             name: Joi.string(),
         }),
     }),
