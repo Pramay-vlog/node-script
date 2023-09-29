@@ -1,6 +1,4 @@
-const apiResponseponse = require("../utils/api.response");
-const { logger } = require("../utils/logger");
-
+const { response, logger } = require('../helpers');
 
 module.exports = (schema) => async (req, res, next) => {
 
@@ -20,13 +18,13 @@ module.exports = (schema) => async (req, res, next) => {
 
         if (error) {
 
-            logger.error(`VALIDATION ERROR: ${error}`);
+            logger.error(`✘ VALIDATION ERROR: ${error}`);
             const context = error?.details;
 
-            return apiResponseponse.BAD_REQUEST({
+            return response.BAD_REQUEST({
                 res,
                 message: `Validation failed for ${path}.`,
-                data: { context, fieldsAccepted: Object.keys(schema[path].describe().keys) },
+                data: { context, fieldsAccepted: Object.keys(schema[path].describe().keys) }
             });
 
         }

@@ -2,28 +2,26 @@ const express = require("express");
 const router = express.Router();
 
 const { auth } = require("../middleware/auth");
-const { USER_TYPE: { ADMIN } } = require("../json/enums.json");
+const { constants: { ENUM: { ROLE } } } = require("../helpers")
 
 const { USER: { VALIDATOR, APIS } } = require("../controllers");
 
+/* Get Apis */
+router.get("/", auth({ usersAllowed: ["*"] }), VALIDATOR.fetch, APIS.getUser);
+router.get("/dashboard", auth({ usersAllowed: [ROLE.ADMIN] }), APIS.dashboardCounts);
 
 /* Post Apis */
 router.post("/signup", VALIDATOR.signup, APIS.signUp);
 router.post("/signin", VALIDATOR.signIn, APIS.signIn);
 router.post("/forgot", VALIDATOR.forgot, APIS.forgot);
 router.post("/verifyOtp", VALIDATOR.verifyOtp, APIS.verifyOtp);
-router.post("/verifyOtp/changePassword", auth({ usersAllowed: ["*"] }), VALIDATOR.afterOtpVerify, APIS.afterOtpVerify)
-router.post("/changePassword", auth({ usersAllowed: ["*"] }), VALIDATOR.changePassword, APIS.changePassword);
-
 
 /* Put Apis */
 router.put("/update/:_id", auth({ usersAllowed: ["*"] }), VALIDATOR.update, APIS.update);
-router.put("/toggleActive/:_id", auth({ usersAllowed: [ADMIN] }), VALIDATOR.toggleActive, APIS.delete)
+router.put("/verifyOtp/resetPassword", auth({ usersAllowed: ["*"] }), VALIDATOR.resetForgotPassword, APIS.resetForgotPassword)
+router.put("/changePassword", auth({ usersAllowed: ["*"] }), VALIDATOR.changePassword, APIS.changePassword);
 
-
-/* Get Apis */
-router.get("/get", auth({ usersAllowed: ["*"] }), VALIDATOR.fetch, APIS.getUser);
-router.get("/dashboard", auth({ usersAllowed: [ADMIN] }), APIS.dashboardCounts);
-
+/* Patch Apis */
+router.patch("/toggleActive/:_id", auth({ usersAllowed: [ROLE.ADMIN] }), VALIDATOR.toggleActive, APIS.toggleActive)
 
 module.exports = router;

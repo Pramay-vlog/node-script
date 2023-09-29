@@ -1,7 +1,8 @@
 const app = require("express")();
+const env = require("../config/env.config");
 
 
-app.get("/", (req, res) => res.send("Welcome to Xxxxx APIs!"));
+app.get("/", (req, res) => res.send(`Welcome to ${env.PROJECT_NAME} APIs!`));
 
 
 app.use("/role", require("./role.routes"));

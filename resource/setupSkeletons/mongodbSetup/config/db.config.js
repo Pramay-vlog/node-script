@@ -1,11 +1,12 @@
-const mongoose = require("mongoose");
-const { logger } = require("../utils/logger");
+const mongoose = require('mongoose');
 
-mongoose
-    .connect(process.env.MONGO_URI)
-    .then(() => {
-        logger.verbose(`DB connected 🤝`)
-    })
-    .catch((err) => {
-        logger.error(`DB connection error 💔`)
-    });
+mongoose.set('strictQuery', true);
+
+const connect = new Promise((resolve, reject) =>
+    mongoose
+        .connect(require('./env.config').MONGODB_URI)
+        .then(() => resolve(mongoose.connection))
+        .catch((error) => reject(error))
+);
+
+module.exports = connect;

@@ -1,46 +1,37 @@
 const { hash } = require("bcryptjs");
 const { Schema, model } = require("mongoose");
-const message = require("../json/message.json");
-const { logger } = require("../utils/logger");
+const { logger } = require('../helpers');
 
 
 const userSchema = new Schema(
     {
-
-        email: { type: String },
-        name: { type: String, },
-        password: { type: String, required: true, },
-        roleId: { type: Schema.Types.ObjectId, ref: "role", required: true, },
-        isActive: { type: Boolean, default: true, },
-
+        email: String,
+        name: String,
+        password: String,
+        roleId: {
+            type: Schema.Types.ObjectId,
+            ref: "Role",
+            required: true,
+        },
+        isActive: {
+            type: Boolean,
+            default: true,
+        },
     },
     { timestamps: true, versionKey: false, }
 );
 
-
-userSchema.pre("save", async function (next) {
+userSchema.pre('save', async function (next) {
     try {
+        if (this.isModified('password') || this.isNew)
+            this.password = await hash(this.password, 10);
 
-        const user = this;
-        console.log("user.isModified(password)", user.isModified("password"), "user.isNew", user.isNew);
-
-        if (user.isModified("password") || user.isNew) {
-
-            this.password = await hash(user.password, 10);
-            next();
-
-        } else {
-            next();
-        }
-
+        next();
     } catch (error) {
-
         logger.error(`PRE SAVE ERROR: ${error}`);
-        return Promise.reject(message.INTERNAL_SERVER_ERROR);
-
+        next(error);
     }
 });
-
 
 userSchema.set("toJSON", {
     transform: function (doc, ret, opt) {
@@ -49,6 +40,5 @@ userSchema.set("toJSON", {
     },
 });
 
-
-let userModel = model("user", userSchema, "user");
+let userModel = model("User", userSchema, "User");
 module.exports = userModel;

@@ -1,10 +1,7 @@
 const DB = require("../models");
-const { USER_TYPE } = require("../json/enums.json");
-const apiResponse = require("../utils/api.response");
-const message = require("../json/message.json");
+const { response, logger } = require('../helpers');
+const { MESSAGE, ENUM: { ROLE } } = require('../helpers/constant.helper');
 const jwt = require("jsonwebtoken");
-const { logger } = require("../utils/logger");
-
 
 module.exports = {
     auth: ({ isTokenRequired = true, usersAllowed = [] } = {}) => {
@@ -12,21 +9,28 @@ module.exports = {
         return async (req, res, next) => {
 
             const token = req.header("x-auth-token");
-            if (isTokenRequired && !token) return apiResponse.BAD_REQUEST({ res, message: message.TOKEN_REQUIRED });
+            if (isTokenRequired && !token) return response.BAD_REQUEST({ res, message: MESSAGE.TOKEN_REQUIRED });
             if (!isTokenRequired && !token) return next();
 
             let user;
             try {
 
                 let decoded = jwt.verify(token, process.env.JWT_SECRET);
+                logger.info(`[DECODED] [ID: ${res.reqId}] [${res.method}] ${res.originalUrl} [CONTENT: ${JSON.stringify(decoded)}]`);
 
                 user = await DB.USER.findOne({ _id: decoded?._id, isActive: true }).populate("roleId").lean();
-                if (!user) return apiResponse.UNAUTHORIZED({ res, message: message.INVALID_TOKEN });
+                if (!user) return response.UNAUTHORIZED({
+                    res,
+                    message: MESSAGE.INVALID_TOKEN,
+                });
 
             } catch (error) {
 
-                logger.error(`AUTH ERROR: ${error}`);
-                return apiResponse.UNAUTHORIZED({ res, message: message.INVALID_TOKEN });
+                logger.error(`✘  AUTH ERROR: ${error}`);
+                return response.UNAUTHORIZED({
+                    res,
+                    message: MESSAGE.INVALID_TOKEN,
+                });
 
             }
 
@@ -34,16 +38,16 @@ module.exports = {
             req.user = user;
             if (usersAllowed.length) {
 
-                if (req.user.roleId.name === USER_TYPE.ADMIN) return next();
+                if (req.user.roleId.name === ROLE.ADMIN) return next();
                 if (usersAllowed.includes("*")) return next();
                 if (usersAllowed.includes(req.user.roleId.name)) return next();
 
-                return apiResponse.UNAUTHORIZED({ res, message: message.UNAUTHORIZED });
+                return response.UNAUTHORIZED({ res, message: MESSAGE.INVALID_TOKEN, });
 
             } else {
 
-                if (req.user.roleId.name === USER_TYPE.ADMIN) return next();
-                return apiResponse.UNAUTHORIZED({ res, message: message.UNAUTHORIZED });
+                if (req.user.roleId.name === ROLE.ADMIN) return next();
+                return response.UNAUTHORIZED({ res, message: MESSAGE.INVALID_TOKEN, });
 
             }
         };

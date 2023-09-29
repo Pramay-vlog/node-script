@@ -1,13 +1,11 @@
 const DB = require("../../models");
-const messages = require("../../json/message.json");
-const apiResponse = require("../../utils/api.response");
+const { response } = require('../../helpers');
 
 module.exports = {
 
     createRole: async (req, res) => {
-        if (await DB.ROLE.findOne({ name: req.body.name }).lean()) return apiResponse.DUPLICATE_VALUE({ res, message: messages.DUPLICATE_KEY });
-
-        return apiResponse.OK({ res, message: messages.SUCCESS, data: await DB.ROLE.create(req.body) });
+        if (await DB.ROLE.findOne({ name: req.body.name }).lean()) return response.DUPLICATE_VALUE({ res });
+        return response.OK({ res, payload: await DB.ROLE.create(req.body) });
     },
 
 };

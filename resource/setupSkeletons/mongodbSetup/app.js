@@ -1,28 +1,22 @@
-require("dotenv").config();
 require("express-async-errors");
 
-
 const express = require("express");
-const cookieParser = require("cookie-parser");
-const logger = require("morgan");
-const cors = require("cors");
-const apiResponse = require("./utils/api.response");
-const errorHandler = require("./middleware/error.handler");
-
-
+const env = require("./config/env.config");
 const app = express();
-app.use(cors({ origin: "*" }));
-app.use(logger("dev"));
-app.use(express.json());
+
+app.use(require('./middleware/request.logger'));
+
+app.use(require('cors')({ origin: '*' }));
+app.use(express.json({ limit: env.JSON_BODY_LIMIT }));
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 
+app.use(env.BASE_URL, require('./routes/index'));
 
-app.use("/api/v1", require("./routes/index"));
+app.use((req, res) =>
+    require('./helpers').response.NOT_FOUND({ res, message: require('./helpers/constant.helper').MESSAGE.INVALID_ROUTE })
+);
 
+//! This is used to handle all the errors that are thrown
+app.use(require('./middleware/error.handler'));
 
-app.use((req, res) => apiResponse.NOT_FOUND({ res, message: "Oops! Looks like you're lost." }));
-
-
-app.use(errorHandler);
 module.exports = app;
