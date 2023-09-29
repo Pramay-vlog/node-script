@@ -2,6 +2,7 @@ const messages = require("../../json/message.json");
 const DB = require("../../models");
 const apiResponse = require("../../utils/api.response");
 const { USER_TYPE: { ADMIN } } = require("../../json/enums.json");
+const { constants: { ENUM: { ROLE }, MESSAGE }, response } = require("../../helpers");
 
 
 /* APIS For Xxxxx */
@@ -11,7 +12,7 @@ module.exports = exports = {
     createXxxxx: async (req, res) => {
 
         const xxxxx = await DB.XXXXX.create(req.body);
-        return apiResponse.OK({ res, message: messages.SUCCESS, data: xxxxx });
+        return response.OK({ res, payload: xxxxx });
 
     },
 
@@ -36,7 +37,7 @@ module.exports = exports = {
             .sort({ [sortBy]: sortOrder })
             .lean();
 
-        return apiResponse.OK({ res, message: messages.SUCCESS, data: { count: await DB.XXXXX.countDocuments(query), data: xxxxxs } });
+        return response.OK({ res, payload: { count: await DB.XXXXX.countDocuments(query), data: xxxxxs } });
 
     },
 
@@ -45,10 +46,10 @@ module.exports = exports = {
     updateXxxxx: async (req, res) => {
 
         let xxxxxExists = await DB.XXXXX.findOne({ _id: req.params._id, isActive: true }).lean();
-        if (!xxxxxExists) return apiResponse.NOT_FOUND({ res, message: messages.NOT_FOUND });
+        if (!xxxxxExists) return response.NOT_FOUND({ res, message: MESSAGE.NOT_FOUND });
 
         await DB.XXXXX.findByIdAndUpdate(req.params._id, req.body, { new: true, });
-        return apiResponse.OK({ res, message: messages.SUCCESS });
+        return response.OK({ res });
 
     },
 
@@ -57,12 +58,13 @@ module.exports = exports = {
     deleteXxxxx: async (req, res) => {
 
         let xxxxxExists = await DB.XXXXX.findOne({ _id: req.params._id }).lean();
-        if (!xxxxxExists) return apiResponse.NOT_FOUND({ res, message: messages.NOT_FOUND });
+        if (!xxxxxExists) return response.NOT_FOUND({ res, message: MESSAGE.NOT_FOUND });
 
         await DB.XXXXX.findByIdAndUpdate(req.params._id, { isActive: false, });
-        return apiResponse.OK({ res, message: messages.SUCCESS });
+        return response.OK({ res });
 
     },
+
 };
 
 module.exports = {
